@@ -4,7 +4,7 @@ __updir() {
     local w="$2"
     local n=${3-1}
 
-    if [[ -z "$d" || -z "$w" || "$n" != <-> ]]; then
+    if [[ -z "$d" || -z "$w" || ! "$n" =~ -?\[0-9\]\+ ]]; then
         return
     fi
 
@@ -17,15 +17,23 @@ __updir() {
         p="${w:1}*"
     fi
 
-    while [[ "$d" != "/" ]]; do
-        if [[ "${d:t}" = ${~p} ]]; then
+    d=("${(@s:/:)d}")
+    local _start=$#d
+    local _end=1
+    if (( n < 0 )); then
+        _end=$_start
+        _start=1
+        n=$(( -n ))
+    fi
+
+    for x in {$_start..$_end}; do
+        if [[ "${d[$x]}" = ${~p} ]]; then
             (( n-- ))
             if (( ! $n )); then
-                echo "$d"
+                echo "${(j:/:)d[@]:0:$x}"
                 return
             fi
         fi
-        d="${d:h}"
     done
 }
 
