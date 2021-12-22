@@ -50,6 +50,7 @@ __upnum() {
 }
 
 __up_cd() {
+    local d="$1"
     if (( ${UP_ECHO_RESULT-0} )); then
         echo "$d"
     fi
